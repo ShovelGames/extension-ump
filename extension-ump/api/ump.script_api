@@ -1,0 +1,85 @@
+- name: ump
+  type: table
+  desc: Functions and constants for interacting with ump APIs
+
+  members:
+
+#*****************************************************************************************************
+
+  - name: set_callback
+    type: function
+    desc: Sets a callback function for receiving events from the SDK.
+
+    parameters:
+    - name: callback
+      type: function
+      desc: Callback function that is executed on any event in the SDK.
+
+      parameters:
+      - name: self
+        type: object
+        desc: The calling script instance
+
+      - name: message
+        type: table
+        desc: A table holding the data
+        fields:
+          - name: event
+            type: number
+            desc: "One of event types:
+                  'ump.EVENT_INITIALIZE_COMPLETE',
+                  'ump.EVENT_RESET_COMPLETE',
+                  'ump.EVENT_COMPLETE',
+                  'ump.EVENT_ERROR',
+                  'ump.EVENT_PRIVACY_OPTIONS_COMPLETE',
+                  'ump.EVENT_PRIVACY_OPTIONS_ERROR"
+
+  - name: initialize
+    type: function
+    desc: Initialize the Google UMP SDK.
+    parameters:
+    - name: test_device_hashed_id
+      type: string
+      desc: Debug only
+      examples: Release ump.initialize(), Debug ump.initialize(test_device_hashed_id)
+
+  - name: reset
+    type: function
+    desc: Reset consent state. Debug only
+
+  - name: show_consent_form
+    type: function
+    desc: Load and show a consent form if required.
+
+  - name: show_privacy_options_form
+    type: function
+    desc: Show a consent form if required.
+
+  - name: is_privacy_options_required
+    type: function
+    desc: getPrivacyOptionsRequirementStatus() == PrivacyOptionsRequirementStatus.REQUIRED
+    returns:
+    - name: is_required
+      type: boolean
+
+#*****************************************************************************************************
+
+  - name: EVENT_INITIALIZE_COMPLETE
+    type: number
+
+  - name: EVENT_RESET_COMPLETE
+    type: number
+
+  - name: EVENT_COMPLETE
+    type: number
+
+  - name: EVENT_ERROR
+    type: number
+
+  - name: EVENT_PRIVACY_OPTIONS_COMPLETE
+    type: number
+
+  - name: EVENT_PRIVACY_OPTIONS_ERROR
+    type: number
+
+#*****************************************************************************************************

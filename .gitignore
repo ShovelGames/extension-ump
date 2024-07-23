@@ -1,0 +1,14 @@
+/.internal
+/build
+.externalToolBuilders
+.DS_Store
+Thumbs.db
+.lock-wscript
+*.pyc
+*.der
+.project
+.cproject
+log.txt
+/debug.keystore
+/debug.keystore.pass.txt
+builtins

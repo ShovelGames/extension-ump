@@ -1,0 +1,61 @@
+
+local function ump_callback(self, message)
+
+	if message == ump.EVENT_INITIALIZE_COMPLETE then
+		label.set_text(self.url, "UMP INITIALIZE COMPLETE!")
+
+		-- Reset
+		-- if sys.get_engine_info().is_debug then
+		-- 	ump.reset()
+		-- end
+
+		-- Call consent form
+		ump.show_consent_form()
+	elseif message == ump.EVENT_COMPLETE then
+		label.set_text(self.url, "UMP COMPLETE!")
+
+		-- local isPrivacyOptionsRequired = ump.is_privacy_options_required()
+
+		-- Load AdMob SDK(request_idfa is not called)
+		-- if admob then
+		-- 	admob.set_callback(admob_callback)
+		-- 	admob.initialize()
+		-- end
+	elseif message == ump.EVENT_ERROR then
+		label.set_text(self.url, "UMP ERROR!")
+	elseif message == ump.EVENT_PRIVACY_OPTIONS_COMPLETE then
+		label.set_text(self.url, "UMP PRIVACY OPTIONS COMPLETE!")
+	elseif message == ump.EVENT_PRIVACY_OPTIONS_ERROR then
+		label.set_text(self.url, "UMP PRIVACY OPTIONS ERROR!")
+	end
+
+end
+
+function init(self)
+
+	self.url = msg.url("go#label")
+	label.set_text(self.url, "UMP START!")
+
+	if ump then
+		-- Call set_callbak and initialize first.
+		ump.set_callback(ump_callback)
+
+		if sys.get_engine_info().is_debug then
+			-- Debug (Simulator for "simulator")
+			local test_device_hashed_id = "simulator"
+
+			local system_name = sys.get_sys_info().system_name
+			if system_name == "Android" then
+				test_device_hashed_id = ""
+			elseif system_name == "iPhone OS" then
+				test_device_hashed_id = ""
+			end
+
+			ump.initialize(test_device_hashed_id)
+		else
+			-- Release
+			ump.initialize()
+		end
+	end
+
+end

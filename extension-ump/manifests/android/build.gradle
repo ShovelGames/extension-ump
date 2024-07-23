@@ -1,0 +1,11 @@
+repositories {
+  google()
+  mavenCentral()
+}
+
+// https://developers.google.com/admob/android/privacy/release-notes
+dependencies {
+  implementation "com.google.android.ump:user-messaging-platform:3.0.0"
+  implementation 'androidx.appcompat:appcompat:1.4.1'
+  implementation 'androidx.core:core-ktx:1.7.0'
+}
