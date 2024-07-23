@@ -10,14 +10,14 @@ height = 960
 
 [android]
 input_method = HiddenInputField
-package = com.github.niwatori1192.extensionump
+package = YOUR_PACKAGE_NAME
 minimum_sdk_version = 21
 
 [project]
 title = extension-ump
-publisher = tomoo
-developer = tomoo
-version = 0.1
+publisher = ShovelGames
+developer = ShovelGames
+version = 1.0
 write_log = 1
 
 [ump]
@@ -27,4 +27,7 @@ ios_tracking_usage_description = Your data will be used to provide you a better 
 
 [library]
 include_dirs = extension-ump
+
+[ios]
+bundle_identifier = YOUR_BUNDLE_IDENTIFIER
 
