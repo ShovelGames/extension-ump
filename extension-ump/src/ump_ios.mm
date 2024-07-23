@@ -13,6 +13,10 @@ namespace ext_ump
 	static NSString *testDeviceHashedId = @"";
 	static std::atomic<bool> isUmpInitializeCalled;
 
+	void sendEvent(MessageEvent msg) {
+		AddToQueueCallback(msg);
+	}
+
 	void completeForm() {
 		bool expected = false;
 		if (!isUmpInitializeCalled.compare_exchange_strong(expected, true)) {
@@ -20,10 +24,6 @@ namespace ext_ump
 		}
 
 		sendEvent(EVENT_COMPLETE);
-	}
-
-	void sendEvent(MessageEvent msg) {
-		AddToQueueCallback(msg);
 	}
 
 	void Initialize_Ump() {
