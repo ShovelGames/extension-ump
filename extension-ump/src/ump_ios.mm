@@ -10,7 +10,7 @@
 namespace ext_ump
 {
 	static UIViewController *uiViewController = nil;
-	static NSString *testDeviceHashedId = @"";
+	static NSString *testDeviceHashedId = nil;
 	static std::atomic<bool> isUmpInitializeCalled;
 
 	void sendEvent(MessageEvent msg) {
@@ -32,7 +32,12 @@ namespace ext_ump
 	}
 
 	void Initialize(const char* deviceId) {
-		testDeviceHashedId = [NSString stringWithUTF8String:deviceId];
+		if (deviceId != NULL) {
+			testDeviceHashedId = [[NSString stringWithUTF8String:deviceId] copy];
+		} else {
+			testDeviceHashedId = @"";
+		}
+
 		sendEvent(EVENT_INITIALIZE_COMPLETE);
 	}
 
@@ -44,11 +49,11 @@ namespace ext_ump
 	void ShowConsentForm() {
 		UMPRequestParameters *parameters = [[UMPRequestParameters alloc] init];
 		parameters.tagForUnderAgeOfConsent = NO;
-
+		
 		// Testing
-		if (testDeviceHashedId.length > 0) {
+		if (testDeviceHashedId != nil && testDeviceHashedId.length > 0) {
 			UMPDebugSettings *debugSettings = [[UMPDebugSettings alloc] init];
-			debugSettings.testDeviceIdentifiers = @[testDeviceHashedId];
+			debugSettings.testDeviceIdentifiers = @[ testDeviceHashedId ];
 			debugSettings.geography = UMPDebugGeographyEEA;
 			parameters.debugSettings = debugSettings;
 		}
