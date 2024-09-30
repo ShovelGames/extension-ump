@@ -44,6 +44,11 @@ function init(self)
 			-- Debug (Simulator for "simulator")
 			local test_device_hashed_id = "simulator"
 
+			-- Testing
+			-- Check the log output for a message.
+			-- <UMP SDK>To enable debug mode for this device, set: UMPDebugSettings.testDeviceIdentifiers = @[2077ef9a63d2b398840261c8221a0c9b]
+			-- test_device_hashed_id = "2077ef9a63d2b398840261c8221a0c9b"
+			
 			local system_name = sys.get_sys_info().system_name
 			if system_name == "Android" then
 				test_device_hashed_id = ""
