@@ -1,4 +1,4 @@
 platform :ios, '12.0'
 
 # https://developers.google.com/admob/ios/privacy/download
-pod 'GoogleUserMessagingPlatform', '2.5.0'
+pod 'GoogleUserMessagingPlatform', '2.6.0'
