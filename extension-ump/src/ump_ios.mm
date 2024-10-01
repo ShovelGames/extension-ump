@@ -32,12 +32,7 @@ namespace ext_ump
 	}
 
 	void Initialize(const char* deviceId) {
-		if (deviceId != NULL) {
-			testDeviceHashedId = [[NSString stringWithUTF8String:deviceId] copy];
-		} else {
-			testDeviceHashedId = @"";
-		}
-
+		testDeviceHashedId = [[NSString stringWithUTF8String:deviceId] copy];
 		sendEvent(EVENT_INITIALIZE_COMPLETE);
 	}
 

@@ -5,9 +5,9 @@ local function ump_callback(self, message)
 		label.set_text(self.url, "UMP INITIALIZE COMPLETE!")
 
 		-- Reset
-		-- if sys.get_engine_info().is_debug then
-		-- 	ump.reset()
-		-- end
+		if sys.get_engine_info().is_debug then
+			ump.reset()
+		end
 
 		-- Call consent form
 		ump.show_consent_form()
@@ -16,7 +16,7 @@ local function ump_callback(self, message)
 
 		-- local isPrivacyOptionsRequired = ump.is_privacy_options_required()
 
-		-- Load AdMob SDK(request_idfa is not called)
+		-- Load AdMob SDK Here (request_idfa is not called)
 		-- if admob then
 		-- 	admob.set_callback(admob_callback)
 		-- 	admob.initialize()
@@ -40,26 +40,22 @@ function init(self)
 		-- Call set_callbak and initialize first.
 		ump.set_callback(ump_callback)
 
-		if sys.get_engine_info().is_debug then
-			-- Debug (Simulator for "simulator")
-			local test_device_hashed_id = "simulator"
+		-- Initialize
+		do
+			local device_hashed_id = ""
 
 			-- Testing
-			-- Check the log output for a message.
-			-- <UMP SDK>To enable debug mode for this device, set: UMPDebugSettings.testDeviceIdentifiers = @[2077ef9a63d2b398840261c8221a0c9b]
-			-- test_device_hashed_id = "2077ef9a63d2b398840261c8221a0c9b"
-			
-			local system_name = sys.get_sys_info().system_name
-			if system_name == "Android" then
-				test_device_hashed_id = ""
-			elseif system_name == "iPhone OS" then
-				test_device_hashed_id = ""
+			if sys.get_engine_info().is_debug then
+				-- Simulator for "simulator"
+				-- device_hashed_id = "simulator"
+
+				-- Check the log output for a message.
+				-- <UMP SDK>To enable debug mode for this device, set: UMPDebugSettings.testDeviceIdentifiers = @[20FBEC2DC1343A52CD61583C2D084BEE]
+				device_hashed_id = "20FBEC2DC1343A52CD61583C2D084BEE"
 			end
 
-			ump.initialize(test_device_hashed_id)
-		else
-			-- Release
-			ump.initialize()
+			-- The device_hashed_id is ignored at release
+			ump.initialize(device_hashed_id)
 		end
 	end
 
