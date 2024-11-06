@@ -12,3 +12,4 @@ log.txt
 /debug.keystore
 /debug.keystore.pass.txt
 builtins
+/.editor_settings
