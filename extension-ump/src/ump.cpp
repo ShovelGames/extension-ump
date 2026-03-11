@@ -48,7 +48,11 @@ namespace ext_ump {
 	static int Lua_ShowConsentForm(lua_State* L) 
 	{
 		DM_LUA_STACK_CHECK(L, 0);
-		ShowConsentForm();
+		bool is_under_age_of_consent = false;
+		if (lua_gettop(L) >= 1 && lua_isboolean(L, 1)) {
+			is_under_age_of_consent = lua_toboolean(L, 1);
+		}
+		ShowConsentForm(is_under_age_of_consent);
 		return 0;
 	}
 

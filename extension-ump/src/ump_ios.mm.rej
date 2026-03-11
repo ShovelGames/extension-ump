@@ -1,0 +1,13 @@
+@@ -43,10 +43,10 @@
+ 		});
+ 	}
+ 
+- void ShowConsentForm() {
++void ShowConsentForm(bool isUnderAgeOfConsent) {
+ 		dispatch_async(dispatch_get_main_queue(), ^{
+ 			UMPRequestParameters *parameters = [[UMPRequestParameters alloc] init];
+- README.mdparameters.tagForUnderAgeOfConsent = NO;
++parameters.tagForUnderAgeOfConsent = isUnderAgeOfConsent ? YES : NO;
+ 			
+ 			// Testing
+ 			if (testDeviceHashedId != nil && testDeviceHashedId.length > 0) {

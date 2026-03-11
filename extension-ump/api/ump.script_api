@@ -50,6 +50,10 @@
   - name: show_consent_form
     type: function
     desc: Load and show a consent form if required.
+    parameters:
+    - name: is_under_age_of_consent
+      type: boolean
+      desc: Set to true to tag the request as being for an underage user (COPPA). Default is false.
 
   - name: show_privacy_options_form
     type: function

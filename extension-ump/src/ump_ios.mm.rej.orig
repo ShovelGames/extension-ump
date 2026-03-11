@@ -1,0 +1,147 @@
+@@ -27,77 +27,87 @@
+ 	}
+ 
+ 	void Initialize_Ump() {
+- UIWindow* window = dmGraphics::GetNativeiOSUIWindow();
+- uiViewController = window.rootViewController;
++dispatch_async(dispatch_get_main_queue(), ^{
++UIWindow* window = dmGraphics::GetNativeiOSUIWindow();
++uiViewController = window.rootViewController;
++});
+ 	}
+ 
+ 	void Initialize(const char* deviceId) {
+- testDeviceHashedId = [[NSString stringWithUTF8String:deviceId] copy];
+- sendEvent(EVENT_INITIALIZE_COMPLETE);
++dispatch_async(dispatch_get_main_queue(), ^{
++testDeviceHashedId = [[NSString stringWithUTF8String:deviceId] copy];
++sendEvent(EVENT_INITIALIZE_COMPLETE);
++});
+ 	}
+ 
+ 	void Reset() {
+- [UMPConsentInformation.sharedInstance reset];
+- sendEvent(EVENT_RESET_COMPLETE);
++dispatch_async(dispatch_get_main_queue(), ^{
++[UMPConsentInformation.sharedInstance reset];
++sendEvent(EVENT_RESET_COMPLETE);
++});
+ 	}
+ 
+ 	void ShowConsentForm() {
+- UMPRequestParameters *parameters = [[UMPRequestParameters alloc] init];
+- parameters.tagForUnderAgeOfConsent = NO;
+- 
+- // Testing
+- if (testDeviceHashedId != nil && testDeviceHashedId.length > 0) {
+- README.mdUMPDebugSettings *debugSettings = [[UMPDebugSettings alloc] init];
+- README.mddebugSettings.testDeviceIdentifiers = @[ testDeviceHashedId ];
+- README.mddebugSettings.geography = UMPDebugGeographyEEA;
+- README.mdparameters.debugSettings = debugSettings;
+- }
+-
+- [UMPConsentInformation.sharedInstance
+- requestConsentInfoUpdateWithParameters:parameters
+- example/completionHandler:^(NSError *_Nullable requestConsentError) {
+- README.mdif (requestConsentError) {
+- example/NSLog(@"UMP requestConsentError: %@", requestConsentError.localizedDescription);
+- example/sendEvent(EVENT_ERROR);
+- example/return;
+- README.md}
+-
+- README.md[UMPConsentForm loadAndPresentIfRequiredFromViewController:uiViewController
+- example/completionHandler:^(NSError *loadAndPresentError) {
+- example/if (loadAndPresentError) {
+- extension-ump/NSLog(@"UMP loadAndPresentError: %@", loadAndPresentError.localizedDescription);
+- extension-ump/sendEvent(EVENT_ERROR);
+- extension-ump/return;
+- example/}
+-
+- example// Consent has been gathered.
+- example/if (UMPConsentInformation.sharedInstance.canRequestAds) {
+- extension-ump/completeForm();
+- example/}
+- README.md}];
+- }];
+-
+- // Check if you can initialize the Google Mobile Ads SDK in parallel
+- // while checking for new consent information. Consent obtained in
+- // the previous session can be used to request ads.
+- if (UMPConsentInformation.sharedInstance.canRequestAds) {
+- README.mdcompleteForm();
+- }
++dispatch_async(dispatch_get_main_queue(), ^{
++UMPRequestParameters *parameters = [[UMPRequestParameters alloc] init];
++parameters.tagForUnderAgeOfConsent = NO;
++
++// Testing
++if (testDeviceHashedId != nil && testDeviceHashedId.length > 0) {
++UMPDebugSettings *debugSettings = [[UMPDebugSettings alloc] init];
++debugSettings.testDeviceIdentifiers = @[ testDeviceHashedId ];
++debugSettings.geography = UMPDebugGeographyEEA;
++parameters.debugSettings = debugSettings;
++}
++
++[UMPConsentInformation.sharedInstance
++requestConsentInfoUpdateWithParameters:parameters
++completionHandler:^(NSError *_Nullable requestConsentError) {
++if (requestConsentError) {
++NSLog(@"UMP requestConsentError: %@", requestConsentError.localizedDescription);
++sendEvent(EVENT_ERROR);
++return;
++}
++
++[UMPConsentForm loadAndPresentIfRequiredFromViewController:uiViewController
++completionHandler:^(NSError *loadAndPresentError) {
++if (loadAndPresentError) {
++NSLog(@"UMP loadAndPresentError: %@", loadAndPresentError.localizedDescription);
++sendEvent(EVENT_ERROR);
++return;
++}
++
++// Consent has been gathered.
++if (UMPConsentInformation.sharedInstance.canRequestAds) {
++completeForm();
++}
++}];
++}];
++
++// Check if you can initialize the Google Mobile Ads SDK in parallel
++// while checking for new consent information. Consent obtained in
++// the previous session can be used to request ads.
++if (UMPConsentInformation.sharedInstance.canRequestAds) {
++completeForm();
++}
++});
+ 	}
+ 
+ 	void ShowPrivacyOptionsForm() {
+ 		// REQUIRED only
+- if (IsPrivacyOptionsRequired()) {
+- README.md[UMPConsentForm presentPrivacyOptionsFormFromViewController:uiViewController
+- README.mdcompletionHandler:^(NSError *_Nullable formError) {
+- example/if (formError) {
+- extension-ump/NSLog(@"UMP formError: %@", formError.localizedDescription);
+- extension-ump/sendEvent(EVENT_PRIVACY_OPTIONS_ERROR);
+- extension-ump/return;
+- example/}
+-
+- example/sendEvent(EVENT_PRIVACY_OPTIONS_COMPLETE);
+- README.md}];
+- }
++dispatch_async(dispatch_get_main_queue(), ^{
++if (IsPrivacyOptionsRequired()) {
++[UMPConsentForm presentPrivacyOptionsFormFromViewController:uiViewController
++completionHandler:^(NSError *_Nullable formError) {
++if (formError) {
++NSLog(@"UMP formError: %@", formError.localizedDescription);
++sendEvent(EVENT_PRIVACY_OPTIONS_ERROR);
++return;
++}
++
++sendEvent(EVENT_PRIVACY_OPTIONS_COMPLETE);
++}];
++}
++});
+ 	}
+ 

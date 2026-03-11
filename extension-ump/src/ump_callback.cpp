@@ -33,7 +33,9 @@ namespace ext_ump {
 			return;
 		}
 
+		lua_newtable(L);
 		lua_pushnumber(L, event);
+		lua_setfield(L, -2, "event");
 		int number_of_arguments = 2;
 		int ret = dmScript::PCall(L, number_of_arguments, 0);
 		(void)ret;

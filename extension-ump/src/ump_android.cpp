@@ -61,7 +61,7 @@ namespace ext_ump
 
 		g_ump.m_Initialize = env->GetMethodID(cls, "initialize", "(Ljava/lang/String;)V");
 		g_ump.m_Reset = env->GetMethodID(cls, "reset", "()V");
-		g_ump.m_ShowConsentForm = env->GetMethodID(cls, "showConsentForm", "()V");
+		g_ump.m_ShowConsentForm = env->GetMethodID(cls, "showConsentForm", "(Z)V");
 		g_ump.m_ShowPrivacyOptionsForm = env->GetMethodID(cls, "showPrivacyOptionsForm", "()V");
 		g_ump.m_IsPrivacyOptionsRequired = env->GetMethodID(cls, "isPrivacyOptionsRequired", "()Z");
 
@@ -79,9 +79,12 @@ namespace ext_ump
 		CallVoidMethod(g_ump.m_Form, g_ump.m_Reset);
 	}
 
-	void ShowConsentForm()
+	void ShowConsentForm(bool isUnderAgeOfConsent)
 	{
-		CallVoidMethod(g_ump.m_Form, g_ump.m_ShowConsentForm);
+		dmAndroid::ThreadAttacher threadAttacher;
+		JNIEnv* env = threadAttacher.GetEnv();
+
+		env->CallVoidMethod(g_ump.m_Form, g_ump.m_ShowConsentForm, isUnderAgeOfConsent ? JNI_TRUE : JNI_FALSE);
 	}
 
 	void ShowPrivacyOptionsForm()

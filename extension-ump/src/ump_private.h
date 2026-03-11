@@ -9,7 +9,7 @@ namespace ext_ump {
 	void Initialize(const char* testDeviceHashedId);
 	void Initialize_Ump();
 	void Reset();
-	void ShowConsentForm();
+	void ShowConsentForm(bool isUnderAgeOfConsent);
 	void ShowPrivacyOptionsForm();
 	bool IsPrivacyOptionsRequired();
 
