@@ -48,79 +48,86 @@ public class Form {
 	}
 
 	public void initialize(final String testDeviceHashedId) {
-		consentInformation = UserMessagingPlatform.getConsentInformation(activity);
-		this.testDeviceHashedId = testDeviceHashedId;
-
-		sendEvent(EVENT_INITIALIZE_COMPLETE);
+		activity.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				consentInformation = UserMessagingPlatform.getConsentInformation(activity);
+				Form.this.testDeviceHashedId = testDeviceHashedId;
+				sendEvent(EVENT_INITIALIZE_COMPLETE);
+			}
+		});
 	}
 
 	public void reset() {
-		consentInformation.reset();
-		sendEvent(EVENT_RESET_COMPLETE);
+		activity.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				consentInformation.reset();
+				sendEvent(EVENT_RESET_COMPLETE);
+			}
+		});
 	}
 
-	public void showConsentForm() {
-		if (consentInformation == null) {
-			Log.w(TAG, "ConsentInformation is not initialized.");
-			sendEvent(EVENT_ERROR);
-			return;
-		}
-
-		// ToDo setTagForUnderAgeOfConsent
-		ConsentRequestParameters params = new ConsentRequestParameters.Builder()
-				.setTagForUnderAgeOfConsent(false)
-				.build();
-
-		// Testing
-		if (this.testDeviceHashedId.length() > 0) {
-			ConsentDebugSettings debugSettings = new ConsentDebugSettings.Builder(activity)
-				.setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_EEA)
-				.addTestDeviceHashedId(this.testDeviceHashedId)
-				.build();
-
-				params = new ConsentRequestParameters
-						.Builder()
-						.setConsentDebugSettings(debugSettings)
-						.setTagForUnderAgeOfConsent(false)
-						.build();
-		}
-
-		consentInformation.requestConsentInfoUpdate(
-				activity,
-				params,
-				(ConsentInformation.OnConsentInfoUpdateSuccessListener) () -> {
-					UserMessagingPlatform.loadAndShowConsentFormIfRequired(
-							activity,
-							(ConsentForm.OnConsentFormDismissedListener) loadAndShowError -> {
-								if (loadAndShowError != null) {
-									// Consent gathering failed.
-									Log.w(TAG, String.format("%s: %s",
-										loadAndShowError.getErrorCode(),
-										loadAndShowError.getMessage()));
-									sendEvent(EVENT_ERROR);
-								}
-
-								// Consent has been gathered.
-								if (consentInformation.canRequestAds()) {
-									completeForm();
-								}
-							});
-				},
-				(ConsentInformation.OnConsentInfoUpdateFailureListener) requestConsentError -> {
-					// Consent gathering failed.
-					Log.w(TAG, String.format("%s: %s",
-						requestConsentError.getErrorCode(),
-						requestConsentError.getMessage()));
+	public void showConsentForm(final boolean isUnderAgeOfConsent) {
+		activity.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (consentInformation == null) {
+					Log.w(TAG, "ConsentInformation is not initialized.");
 					sendEvent(EVENT_ERROR);
+					return;
 				}
-		);
 
-		// Check if you can initialize the Google Mobile Ads SDK in parallel
-		// while checking for new consent information. Consent obtained in
-		// the previous session can be used to request ads.
-		if (consentInformation.canRequestAds()) {
-			completeForm();
-		}
+				ConsentRequestParameters.Builder paramsBuilder = new ConsentRequestParameters.Builder()
+						.setTagForUnderAgeOfConsent(isUnderAgeOfConsent);
+
+				// Testing
+				if (testDeviceHashedId != null && testDeviceHashedId.length() > 0) {
+					ConsentDebugSettings debugSettings = new ConsentDebugSettings.Builder(activity)
+						.setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_EEA)
+						.addTestDeviceHashedId(testDeviceHashedId)
+						.build();
+
+					paramsBuilder.setConsentDebugSettings(debugSettings);
+				}
+
+				ConsentRequestParameters params = paramsBuilder.build();
+
+				consentInformation.requestConsentInfoUpdate(
+						activity,
+						params,
+						(ConsentInformation.OnConsentInfoUpdateSuccessListener) () -> {
+							UserMessagingPlatform.loadAndShowConsentFormIfRequired(
+									activity,
+									(ConsentForm.OnConsentFormDismissedListener) loadAndShowError -> {
+										if (loadAndShowError != null) {
+											// Consent gathering failed.
+											Log.w(TAG, String.format("%s: %s",
+												loadAndShowError.getErrorCode(),
+												loadAndShowError.getMessage()));
+											sendEvent(EVENT_ERROR);
+										} else if (consentInformation.canRequestAds()) {
+											completeForm();
+										}
+									});
+						},
+						(ConsentInformation.OnConsentInfoUpdateFailureListener) requestConsentError -> {
+							// Consent gathering failed.
+							Log.w(TAG, String.format("%s: %s",
+								requestConsentError.getErrorCode(),
+								requestConsentError.getMessage()));
+							sendEvent(EVENT_ERROR);
+						}
+				);
+
+				// Check if you can initialize the Google Mobile Ads SDK in parallel
+				// while checking for new consent information. Consent obtained in
+				// the previous session can be used to request ads.
+				if (consentInformation.canRequestAds()) {
+					completeForm();
+				}
+			}
+		});
 	}
 
 	public void showPrivacyOptionsForm() {

@@ -27,23 +27,30 @@ namespace ext_ump
 	}
 
 	void Initialize_Ump() {
-		UIWindow* window = dmGraphics::GetNativeiOSUIWindow();
-		uiViewController = window.rootViewController;
+		dispatch_async(dispatch_get_main_queue(), ^{
+			UIWindow* window = dmGraphics::GetNativeiOSUIWindow();
+			uiViewController = window.rootViewController;
+		});
 	}
 
 	void Initialize(const char* deviceId) {
-		testDeviceHashedId = [[NSString stringWithUTF8String:deviceId] copy];
-		sendEvent(EVENT_INITIALIZE_COMPLETE);
+		dispatch_async(dispatch_get_main_queue(), ^{
+			testDeviceHashedId = [[NSString stringWithUTF8String:deviceId] copy];
+			sendEvent(EVENT_INITIALIZE_COMPLETE);
+		});
 	}
 
 	void Reset() {
-		[UMPConsentInformation.sharedInstance reset];
-		sendEvent(EVENT_RESET_COMPLETE);
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[UMPConsentInformation.sharedInstance reset];
+			sendEvent(EVENT_RESET_COMPLETE);
+		});
 	}
 
-	void ShowConsentForm() {
-		UMPRequestParameters *parameters = [[UMPRequestParameters alloc] init];
-		parameters.tagForUnderAgeOfConsent = NO;
+	void ShowConsentForm(bool isUnderAgeOfConsent) {
+		dispatch_async(dispatch_get_main_queue(), ^{
+			UMPRequestParameters *parameters = [[UMPRequestParameters alloc] init];
+			parameters.tagForUnderAgeOfConsent = isUnderAgeOfConsent ? YES : NO;
 		
 		// Testing
 		if (testDeviceHashedId != nil && testDeviceHashedId.length > 0) {
@@ -83,22 +90,25 @@ namespace ext_ump
 		if (UMPConsentInformation.sharedInstance.canRequestAds) {
 			completeForm();
 		}
+		});
 	}
 
 	void ShowPrivacyOptionsForm() {
 		// REQUIRED only
-		if (IsPrivacyOptionsRequired()) {
-			[UMPConsentForm presentPrivacyOptionsFormFromViewController:uiViewController
-			completionHandler:^(NSError *_Nullable formError) {
-				if (formError) {
-					NSLog(@"UMP formError: %@", formError.localizedDescription);
-					sendEvent(EVENT_PRIVACY_OPTIONS_ERROR);
-					return;
-				}
+		dispatch_async(dispatch_get_main_queue(), ^{
+			if (IsPrivacyOptionsRequired()) {
+				[UMPConsentForm presentPrivacyOptionsFormFromViewController:uiViewController
+				completionHandler:^(NSError *_Nullable formError) {
+					if (formError) {
+						NSLog(@"UMP formError: %@", formError.localizedDescription);
+						sendEvent(EVENT_PRIVACY_OPTIONS_ERROR);
+						return;
+					}
 
-				sendEvent(EVENT_PRIVACY_OPTIONS_COMPLETE);
-			}];
-		}
+					sendEvent(EVENT_PRIVACY_OPTIONS_COMPLETE);
+				}];
+			}
+		});
 	}
 
 	bool IsPrivacyOptionsRequired() {
